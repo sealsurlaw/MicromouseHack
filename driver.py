@@ -22,9 +22,6 @@ class Driver:
         self.SEN3TRIG = 21
         self.SEN3ECHO = 23
 
-        self.p1 = None
-        self.p2 = None
-
         GPIO.setmode( GPIO.BOARD )
     
         GPIO.setup( self.IN1, GPIO.OUT, initial=GPIO.LOW )
@@ -34,6 +31,12 @@ class Driver:
 
         GPIO.setup( self.PWM1, GPIO.OUT, initial=GPIO.LOW )
         GPIO.setup( self.PWM2, GPIO.OUT, initial=GPIO.LOW )
+
+        self.p1 = GPIO.PWM( self.PWM1, 2000 )
+        self.p2 = GPIO.PWM( self.PWM2, 2000 )
+
+        self.p1.start(0)
+        self.p2.start(0)
 
         GPIO.setup( self.SEN1TRIG, GPIO.OUT, initial=GPIO.LOW )
         GPIO.setup( self.SEN1ECHO, GPIO.IN )
@@ -60,17 +63,14 @@ class Driver:
             self.p2.ChangeDutyCycle( speed )
 
 
-    def forward(self, speed=50, frequency=500):
+    def forward(self, speed=50):
         GPIO.output( self.IN1, GPIO.LOW )
         GPIO.output( self.IN2, GPIO.HIGH )
         GPIO.output( self.IN3, GPIO.LOW )
         GPIO.output( self.IN4, GPIO.HIGH )
 
-        self.p1 = GPIO.PWM( self.PWM1, frequency )
-        self.p2 = GPIO.PWM( self.PWM2, frequency )
-
-        self.p1.start( speed )
-        self.p2.start( speed )
+        self.p1.ChangeDutyCycle( speed )
+        self.p2.ChangeDutyCycle( speed )
 
 
     def backward(self, speed=50, frequency=500):
@@ -79,11 +79,8 @@ class Driver:
         GPIO.output( self.IN3, GPIO.HIGH )
         GPIO.output( self.IN4, GPIO.LOW )
 
-        self.p1 = GPIO.PWM( self.PWM1, frequency )
-        self.p2 = GPIO.PWM( self.PWM2, frequency )
-
-        self.p1.start( speed )
-        self.p2.start( speed )
+        self.p1.ChangeDutyCycle( speed )
+        self.p2.ChangeDutyCycle( speed )
 
 
     def left(self, duration=0.2, speed=50, frequency=500):
@@ -122,12 +119,14 @@ class Driver:
         self.p1 = GPIO.PWM( self.PWM1, frequency )
         self.p2 = GPIO.PWM( self.PWM2, frequency )
 
-        self.p1.start( speed )
+        self.p1.start( speed-3 )
         self.p2.start( speed )
 
         time.sleep( duration )
 
-        self.stop()
+        #self.stop()
+        self.p1.stop()
+        self.p2.stop()
 
 
     def stop(self):

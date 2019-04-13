@@ -1,0 +1,21 @@
+from driver import Driver
+import time
+
+mouse = Driver()
+
+speed=40
+
+mouse.forward()
+
+count = 0
+while count < 10:
+    r1, l1, f1 = mouse.ping()
+    r2, l2, f2 = mouse.ping()
+    r3, l3, f3 = mouse.ping()
+
+    r = (r1 + r2 + r3) / 3
+    l = (l1 + l2 + l3) / 3
+
+    print(r-l)
+    time.sleep(0.5)
+    count += 1
